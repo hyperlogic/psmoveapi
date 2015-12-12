@@ -30,7 +30,12 @@
 
 
 
+#ifdef _WIN32
+#include <Windows.h>
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -132,7 +137,11 @@ int run_daemon()
 #else
     // On non-Linux systems we just try to pair every 5 seconds for now
     while (1) {
+#ifdef _WIN32
+        Sleep(5000);
+#else
         sleep(5);
+#endif
         pair(NULL);
     }
 #endif // __linux

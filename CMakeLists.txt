@@ -91,7 +91,10 @@ if(PSMOVE_USE_DEBUG)
     add_definitions(-g -O0 -Wall)
     set(INFO_USE_DEBUG "Yes")
 else()
-    add_definitions(-O2 -Wall -Wno-unused)
+    add_definitions(-O2 -Wall)
+    if (NOT WIN32)
+        add_definitions(-Wno-unused)
+    endif()
     set(INFO_USE_DEBUG "No")
 endif()
 
@@ -253,11 +256,11 @@ ELSEIF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
     set(CMAKE_STATIC_LIBRARY_FLAGS "${CMAKE_STATIC_LIBRARY_FLAGS} -static -static-libgcc -static-libstdc++")
 
-    if (NOT CMAKE_TOOLCHAIN_FILE)
-        # Only include these if we are NOT cross-compiling on Linux
-        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/mingw-w64-headers)
-        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/mingw-w64-headers)
-    endif()
+#    if (NOT CMAKE_TOOLCHAIN_FILE)
+#        # Only include these if we are NOT cross-compiling on Linux
+#        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/mingw-w64-headers)
+#        link_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/mingw-w64-headers)
+#    endif()
 
     IF(PSMOVE_USE_CL_EYE_SDK)
         find_path(CL_EYE_SDK_PATH Bin/CLEyeMulticam.dll
@@ -280,8 +283,9 @@ ELSEIF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
     set(HIDAPI_SRC ${PSMOVEAPI_SOURCE_DIR}/external/hidapi/windows/hid.c)
 
-    list(APPEND PSMOVEAPI_PLATFORM_SRC
-        ${PSMOVEAPI_SOURCE_DIR}/src/platform/psmove_winsupport.c)
+    list(APPEND PSMOVEAPI_PLATFORM_SRC ${PSMOVEAPI_SOURCE_DIR}/src/platform/psmove_winsupport.c)
+    list(APPEND PSMOVEAPI_PLATFORM_SRC ${PSMOVEAPI_SOURCE_DIR}/src/platform/windows_clockgettime.c)
+    list(APPEND PSMOVEAPI_PLATFORM_SRC ${PSMOVEAPI_SOURCE_DIR}/src/platform/windows_snprintf.c)
 
     list(APPEND PSMOVEAPI_TRACKER_PLATFORM_SRC
         ${PSMOVEAPI_SOURCE_DIR}/src/tracker/platform/camera_control_win32.c)

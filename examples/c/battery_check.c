@@ -26,7 +26,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
+#ifdef _WIN32
+#include <io.h>
+#include <Windows.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -87,7 +92,11 @@ int main(int argc, char* argv[])
             if(buttons & Btn_PS)
                 running = false;
         }
+#ifdef _WIN32
+        Sleep(1000);
+#else
         sleep(1);
+#endif
     }
 
     for(i=0; i<c; i++) {

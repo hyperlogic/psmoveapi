@@ -28,8 +28,12 @@
  **/
 
 
-
+#ifdef _WIN32
+#include <io.h>
+#include <Windows.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -78,7 +82,11 @@ int main(int argc, char* argv[])
         psmove_set_leds(move, 0, 255*(i%3==0), 0);
         psmove_set_rumble(move, 255*(i%2));
         psmove_update_leds(move);
+#ifdef _WIN32
+        Sleep(10 * (i % 10));
+#else
         usleep(10000*(i%10));
+#endif
     }
 
     for (i=250; i>=0; i-=5) {
@@ -94,7 +102,7 @@ int main(int argc, char* argv[])
     psmove_set_rumble(move, 0);
     psmove_update_leds(move);
 
-    while (ctype != Conn_USB && !(psmove_get_buttons(move) & Btn_PS)) {
+    while (/* ctype != Conn_USB && */ !(psmove_get_buttons(move) & Btn_PS)) {
         int res = psmove_poll(move);
         if (res) {
             if (psmove_get_buttons(move) & Btn_TRIANGLE) {

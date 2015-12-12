@@ -28,7 +28,11 @@
  **/
 
 
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

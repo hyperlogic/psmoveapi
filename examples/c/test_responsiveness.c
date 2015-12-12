@@ -35,7 +35,11 @@
  * 3) Rumbles for 1 second in every 5. For controller to controller comparison.
  **/
 
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

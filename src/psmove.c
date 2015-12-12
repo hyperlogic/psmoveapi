@@ -38,8 +38,15 @@
 #include <ctype.h>
 #include <string.h>
 #include <wchar.h>
+#ifdef _WIN32
+#include <io.h>
+#include "platform/windows_clockgettime.h"
+#include "platform/windows_snprintf.h"
+#include <stdio.h>
+#else
 #include <unistd.h>
 #include <sys/time.h>
+#endif
 #include <sys/stat.h>
 #include <math.h>
 #include <limits.h>
@@ -163,7 +170,7 @@ typedef struct {
 #define TWELVE_BIT_SIGNED(x) (((x) & 0x800)?(-(((~(x)) & 0xFFF) + 1)):(x))
 
 /* Decode 16-bit signed value from data pointer and offset */
-static inline int
+static int
 psmove_decode_16bit(char *data, int offset)
 {
     unsigned char low = data[offset] & 0xFF;
@@ -2151,7 +2158,7 @@ psmove_util_get_file_path(const char *filename)
     char *result;
     struct stat st;
 
-#ifndef __WIN32
+#ifndef _WIN32
     // if run as root, use system-wide data directory
     if (geteuid() == 0) {
         parent = PSMOVE_SYSTEM_DATA_DIR;

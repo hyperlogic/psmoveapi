@@ -39,7 +39,10 @@ extern "C" {
 #include <stdio.h>
 #include <wchar.h>
 #include <time.h>
-#include <pthread.h> /* for timespec on Windows */
+#ifdef _WIN32
+#include "platform/windows_clockgettime.h"
+#endif
+//#include <pthread.h> /* for timespec on Windows */
 
     /**
      * PRIVATE DEFINITIONS FOR USE IN psmove.c AND psmove_*.c
@@ -70,6 +73,19 @@ extern "C" {
 #define psmove_WARNING(msg, ...) \
         psmove_PRINTF("PSMOVE WARNING", msg, ## __VA_ARGS__)
 
+#ifdef _WIN32
+/* Macro: Print a critical message if an assertion fails */
+#define psmove_CRITICAL(x) \
+        psmove_PRINTF("PSMOVE CRITICAL", \
+                "Assertion fail in %s:%d: %s\n", \
+                __FILE__, __LINE__, x)
+
+/* Macro: Deprecated functions */
+#define psmove_DEPRECATED(x) \
+        psmove_PRINTF("PSMOVE DEPRECATED", \
+                "function in %s:%d is deprecated: %s\n", \
+                __FILE__, __LINE__, x)
+#else
 /* Macro: Print a critical message if an assertion fails */
 #define psmove_CRITICAL(x) \
         psmove_PRINTF("PSMOVE CRITICAL", \
@@ -81,6 +97,7 @@ extern "C" {
         psmove_PRINTF("PSMOVE DEPRECATED", \
                 "%s is deprecated: %s\n", \
                 __func__, x)
+#endif
 
 /* Macros: Return immediately if an assertion fails + log */
 #define psmove_return_if_fail(expr) \
